@@ -1,16 +1,22 @@
 # Week 6 extension mini-essays
 
-Covers **lectures 11 and 12**. Due **2026-10-18, 23:59**.
+Covers **lectures 11 and 12**. Due **2026-10-19, 23:59**.
 
 Add one file: `week6/week6-<yourname>-ext.html`, where `<yourname>` is your Latin name
 in lowercase with no spaces (for example `week6/week6-tongli-ext.html`). Start from
 [`TEMPLATE_ext.html`](../TEMPLATE_ext.html), and keep it a single self-contained HTML file.
 
-One example, one scenario, one opinion, one perspective or one argument. A few paragraphs,
-roughly 400 to 800 words. One thing you made yourself, with the code beside it. Every claim
-traceable. Not a recap of the lecture.
+One thing from the week, taken past where the lecture left it. Either bring something in
+from outside (one example, scenario, opinion, perspective or argument) or push on what was
+taught (go deeper into a step, examine an assumption, go one level more advanced, try a
+different method, take up the complementary idea).
+
+Five requirements: **short** (a few paragraphs); **clearly told**, one chain of logic,
+almost tutorial-like, so anyone in the class can read it quickly and understand it;
+**well illustrated** wherever a diagram, picture or graph is possible at all; **one thing
+you made yourself**, with the code beside it; every claim **traceable**. Not a recap.
 
 The worked example is at
 <https://chemaoxfz.github.io/assets/ccbs/2026fall/extension-example/>.
 
-Everyone writes one every week, including the week you teach. Your best 6 of 8 count.
+Everyone writes one every week, including the week you teach. Your best 6 of 8 count, 5 points each.

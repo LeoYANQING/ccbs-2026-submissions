@@ -1,6 +1,6 @@
 # CCBS 2026 — submissions
 
-Course: **CST 5034, Control and Computation in Biological Systems, Fall 2026**
+Course: **EST 5053, Control and Computation in Biological Systems, Fall 2026**
 (Westlake University). Course site: <https://chemaoxfz.github.io/ccbs/2026fall/>
 Read [**How this course works**](https://chemaoxfz.github.io/assets/ccbs/2026fall/intro/) first.
 
@@ -14,7 +14,7 @@ request that merges itself.** You do not need write access and nobody has to app
 | What | Where | When |
 |---|---|---|
 | **Sign up to teach a lecture** | `signup/lectureNN-yourname.md` | by **Thu 2026-09-03, 23:59** |
-| **Extension mini-essay**, one per week | `weekN/weekN-yourname-ext.html` | Sundays 23:59, eight of them |
+| **Extension mini-essay**, one per week | `weekN/weekN-yourname-ext.html` | Mondays 23:59, eight of them |
 | **Exposition**, after you teach | `lectureNN/` (any sensible filename) | the week you teach |
 | **Research essay** | `research-essay/yourname.html` | **Thu 2026-11-05, 23:59** |
 
@@ -82,12 +82,19 @@ immediately.
 ## 2. Extension mini-essays
 
 One per teaching week, eight in total, including the weeks you teach and including week 1.
-**Your best 6 of 8 count**, so you have two free skips.
+**Your best 6 of 8 count** at 5 points each, so you have two free skips.
 
-One example, one scenario, one opinion, one perspective or one argument, taken past where
-the lecture left it. A few paragraphs, roughly 400 to 800 words. It must contain one thing
-you made yourself (a number you computed, a figure you plotted) with the code beside it,
-and every claim must be traceable to something a reader can check. It must not be a recap.
+One thing from the week, taken past where the lecture left it. Either bring something in
+from outside (one example, scenario, opinion, perspective or argument) or push on what was
+taught (go deeper into a step the lecture compressed, examine an assumption, go one level
+more advanced, attack the same problem another way, take up the complementary idea). The
+`research-essay` skill pointed at the week's topic will surface most of these.
+
+Five requirements: **short** (a few paragraphs, long enough to make one point properly);
+**clearly told**, one chain of logic from start to finish, almost tutorial-like, so anyone
+in the class can read it quickly and understand it; **well illustrated** wherever a diagram,
+picture or graph is possible at all; **one thing you made yourself** (a number you computed,
+a figure you plotted) with the code beside it; and every claim **traceable**. Not a recap.
 
 Start from [`TEMPLATE_ext.html`](TEMPLATE_ext.html); keep it one self-contained HTML file
 with no external assets. The worked example, written by the lecturer, is at
@@ -95,24 +102,23 @@ with no external assets. The worked example, written by the lecturer, is at
 
 | Week | Lectures | Due |
 |---|---|---|
-| 1 | 1, 2 | Sun 2026-09-06 |
-| 2 | 3, 4 | Sun 2026-09-13 |
-| 3 | 5, 6 | Sun 2026-09-20 |
-| 4 | 7, 8 | Sun 2026-09-27 |
-| 5 | 9, 10 | Sun 2026-10-11 |
-| 6 | 11, 12 | Sun 2026-10-18 |
-| 7 | 13, 14 | Sun 2026-10-25 |
-| 8 | 15, 16 | Sun 2026-11-01 |
+| 1 | 1, 2 | Mon 2026-09-07 |
+| 2 | 3, 4 | Mon 2026-09-14 |
+| 3 | 5, 6 | Mon 2026-09-21 |
+| 4 | 7, 8 | Mon 2026-09-28 |
+| 5 | 9, 10 | Mon 2026-10-12 |
+| 6 | 11, 12 | Mon 2026-10-19 |
+| 7 | 13, 14 | Mon 2026-10-26 |
+| 8 | 15, 16 | Mon 2026-11-02 |
 
 Conflicting positions are welcome. Two of you may argue opposite sides of the same question
-in the same week; the assembled page keeps the disagreement visible.
+in the same week.
 
 ## 3. Exposition
 
 After you teach, put whatever you taught from into `lectureNN/`: an HTML page, a notebook,
-a slide deck exported to PDF, or all three. Add a short `what-we-added.md` saying what you
-put on top of the core page and where it came from. This becomes the lecture's *exposition*
-artifact on the course site, with your names on it.
+a slide deck exported to PDF, or all three. This becomes the lecture's *exposition* artifact
+on the course site, with your names on it.
 
 ## 4. Research essay
 
@@ -132,7 +138,7 @@ Thursday 2026-11-05, 23:59.
 - **Weekly extension page.** Run `python3 tools/assemble_extension.py weekN`. It emits
   `weekN/extension_skeleton.html` with every mini-essay placed in order. Hand the skeleton
   to an agent with the instruction to weave the essays into one coherent themed writeup,
-  keeping authors and keeping conflicts visibly in conversation. Review the result
+  keeping the authors' names. Review the result
   yourself, then publish it to the main site repo at
   `assets/ccbs/2026fall/lectureNN/extension/index.html` and link it from
   `_pages/ccbs-2026.md`.
