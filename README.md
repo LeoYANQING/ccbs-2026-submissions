@@ -5,7 +5,10 @@ Course: **EST 5053, Control and Computation in Biological Systems, Fall 2026**
 Read [**How this course works**](https://chemaoxfz.github.io/assets/ccbs/2026fall/intro/) first.
 
 Everything you hand in lands here, and **everything is submitted the same way: a pull
-request that merges itself.** You do not need write access and nobody has to approve you.
+request that merges itself.** You do not need write access. For most accounts no human
+approval is needed; GitHub may ask the course staff to approve the first workflow run from
+a brand-new GitHub account. That is GitHub's anti-abuse safeguard, not a problem with your
+submission, and the bot takes over as soon as the run is released.
 
 ---
 
@@ -27,19 +30,33 @@ request that merges itself.** You do not need write access and nobody has to app
 2. Add your file in your fork, on the web or with `git`. Use the right folder and the right
    filename; the rules are in the table above and in each folder's README.
 3. Open a **pull request** back to `main` here. Title it with your name and what it is.
-4. A bot checks the file paths and **merges within a minute or two**. It comments on your
-   pull request either way, so you always know where you stand.
+4. A bot checks the file name, size, sign-up details and ownership, then **merges within a
+   minute or two**. It comments on your pull request either way, so you always know where
+   you stand. If GitHub says the workflow is waiting for approval because your account is
+   new, tell a TA; you do not need to open another pull request.
 
 That is the whole workflow. It is also, deliberately, the first assignment: the sign-up
 pull request proves you can submit, well before anything is graded on it.
 
 ### What the bot checks
 
-It merges when every changed file matches one of the submission paths above, nothing
-outside them is touched, there are at most 12 files, and none is over 5 MB. It refuses,
-with an explanation, if a filename does not match, if you edit course files
-(`README.md`, `tools/`, `TEMPLATE*`, `signup/ROSTER.md`, `.github/`), or if the branch
-conflicts with `main`. Push a fix to the same branch and it re-runs by itself.
+- One pull request contains one submission type. Sign-ups, extensions and research essays
+  are one file each; an exposition may contain up to 12 files for one lecture.
+- Every file follows the path and naming rule, is non-empty, is a regular file, and is at
+  most 5 MB. The week number in an extension's folder and filename must match.
+- A sign-up has all required front matter, names the same lecture as its filename, and has
+  a `github` field matching the account that opened the pull request. GitHub account,
+  student ID, email and submission name must be unique, and a lecture cannot exceed three
+  students.
+- Later work must come from the GitHub account in a merged sign-up. Extensions and research
+  essays must reuse that sign-up's `yourname`; expositions must go to that student's own
+  lecture folder. This also prevents one student from replacing another student's work.
+- Course files (`README.md`, `.github/`, `tools/`, templates and the generated roster),
+  deletions, renames and mixed submissions are refused.
+
+The bot explains every problem in one comment. Push a fix to the same branch and it re-runs
+by itself. If a clean branch cannot merge because `main` moved, update the branch from
+`main` and push again.
 
 If you are fighting the bot for more than ten minutes, stop and ask a TA. Email to
 Wenqin Zhou (zhouwenqin@westlake.edu.cn) and Xinyu Wang (wangxinyu@westlake.edu.cn),
@@ -145,5 +162,10 @@ Thursday 2026-11-05, 23:59.
 - **Exposition.** Copy the team's files to
   `assets/ccbs/2026fall/lectureNN/exposition/` on the main site and link them.
 - **The merge bot.** `.github/workflows/automerge.yml`. It runs on `pull_request_target`
-  and never checks out or executes pull-request contents; it only reads the file list
-  through the API and merges. Do not add a checkout of the pull request head to it.
+  and checks out only the trusted base-branch validator in
+  `tools/validate_submission.cjs`. It reads pull-request files as data through the API and
+  never checks out or executes them. Do not add a checkout of the pull request head to it.
+  Run `node --test tools/test_validate_submission.cjs` after changing the guardrails.
+- **Brand-new GitHub accounts.** GitHub may hold their first workflow run for approval.
+  Release it from the pull request's workflow banner; after that, the normal bot comment
+  and merge happen automatically.

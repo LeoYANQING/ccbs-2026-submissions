@@ -16,3 +16,12 @@ from `_pages/ccbs-2026.md` in `chemaoxfz/chemaoxfz.github.io`.
 `tools/build_roster.py` is the other script here: it regenerates `signup/ROSTER.md`
 from the `signup/lectureNN-*.md` sign-up files. It runs automatically as the second job
 of `.github/workflows/automerge.yml`, so you rarely need to invoke it by hand.
+
+`tools/validate_submission.cjs` is the trusted merge gate used by
+`.github/workflows/automerge.yml`. It checks paths, real file sizes, sign-up front matter,
+lecture capacity, unique identities and ownership without executing pull-request content.
+After changing it, run:
+
+```sh
+node --test tools/test_validate_submission.cjs
+```

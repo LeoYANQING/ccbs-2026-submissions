@@ -4,9 +4,10 @@ name: Auto-merge student submissions
 # rebuilds the teaching roster.
 #
 # Runs on pull_request_target so that pull requests from forks get a token with
-# write access. The validate-and-merge job NEVER checks out or executes the pull
-# request's contents; it only reads the file list through the API and merges.
-# Do not add a checkout of github.event.pull_request.head to it.
+# write access. The validate-and-merge job checks out ONLY the trusted base commit
+# that contains tools/validate_submission.cjs. Student files are read as data
+# through the API and are NEVER checked out or executed.
+# Do not add a checkout of github.event.pull_request.head to this job.
 #
 # The roster rebuild lives here rather than in roster.yml because a merge performed
 # with GITHUB_TOKEN does not trigger a new `push` workflow run.
@@ -29,103 +30,22 @@ jobs:
     outputs:
       merged: ${{ steps.gate.outputs.merged }}
     steps:
+      - name: Check out the trusted validator from the base branch
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.base.sha }}
+          persist-credentials: false
+      - name: Test the trusted validator
+        run: node --test tools/test_validate_submission.cjs
       - name: Validate the changed files, then merge
         id: gate
         uses: actions/github-script@v7
         with:
           script: |
-            const pr = context.payload.pull_request;
-            const owner = context.repo.owner, repo = context.repo.repo;
-            core.setOutput("merged", "false");
-
-            const files = await github.paginate(
-              github.rest.pulls.listFiles,
-              { owner, repo, pull_number: pr.number, per_page: 100 }
+            const guard = require(
+              `${process.env.GITHUB_WORKSPACE}/tools/validate_submission.cjs`
             );
-
-            const ALLOWED = [
-              // sign-up: signup/lecture07-tongli.md
-              /^signup\/lecture(0[3-9]|1[0-6])-[a-z0-9][a-z0-9._-]*\.md$/,
-              // extension mini-essay: week3/week3-tongli-ext.html
-              /^week[1-8]\/week[1-8]-[a-z0-9][a-z0-9._-]*-ext\.(html|htm)$/,
-              // exposition: lecture07/anything-you-taught-from.*
-              /^lecture(0[3-9]|1[0-6])\/[A-Za-z0-9][A-Za-z0-9._ -]*\.(html|htm|pdf|pptx|ipynb|md|py|png|jpg|jpeg|svg|css|js)$/,
-              // research essay: research-essay/tongli.html
-              /^research-essay\/[a-z0-9][a-z0-9._-]*\.(html|htm)$/,
-            ];
-            const NEVER = [
-              /^\.github\//, /^tools\//, /^README\.md$/, /^TEMPLATE/,
-              /^signup\/ROSTER\.md$/, /^signup\/TEMPLATE\.md$/, /^\.gitignore$/,
-            ];
-
-            const MAX_FILES = 12;
-            const MAX_BYTES = 5 * 1024 * 1024;
-            const problems = [];
-
-            if (files.length === 0) problems.push("The pull request changes no files.");
-            if (files.length > MAX_FILES)
-              problems.push(`${files.length} files changed; the limit is ${MAX_FILES}. Open one pull request per submission.`);
-
-            for (const f of files) {
-              const p = f.filename;
-              if (NEVER.some(r => r.test(p)))
-                problems.push(`\`${p}\` is a course file and cannot be changed by a submission pull request.`);
-              else if (!ALLOWED.some(r => r.test(p)))
-                problems.push(`\`${p}\` does not match any submission path. See the naming rules in the README.`);
-              if (f.status === "removed")
-                problems.push(`\`${p}\` is being deleted. Submissions only add or update your own files.`);
-              if ((f.size ?? 0) > MAX_BYTES)
-                problems.push(`\`${p}\` is larger than 5 MB. Keep submissions to a single self-contained file.`);
-            }
-
-            const marker = "<!-- ccbs-automerge -->";
-            const say = async (body) => {
-              const list = await github.rest.issues.listComments(
-                { owner, repo, issue_number: pr.number, per_page: 100 });
-              const mine = list.data.find(c => c.body && c.body.includes(marker));
-              const full = `${marker}\n${body}`;
-              if (mine) await github.rest.issues.updateComment({ owner, repo, comment_id: mine.id, body: full });
-              else await github.rest.issues.createComment({ owner, repo, issue_number: pr.number, body: full });
-            };
-
-            if (problems.length) {
-              await say(
-                "**Not merged yet.** This pull request touches something it should not, " +
-                "or a filename does not match the expected pattern:\n\n" +
-                problems.map(p => `- ${p}`).join("\n") +
-                "\n\nFix it and push again to the same branch; this check re-runs automatically. " +
-                "The naming rules are in the [README](https://github.com/" + owner + "/" + repo + "#readme). " +
-                "If you are stuck for more than ten minutes, ask a TA rather than fighting the bot."
-              );
-              core.setFailed("Submission paths did not validate.");
-              return;
-            }
-
-            if (pr.draft) {
-              await say("Looks fine, but the pull request is still a **draft**. Mark it ready for review and it will merge.");
-              return;
-            }
-
-            await say(
-              "**Checks passed** (" + files.length + " file" + (files.length === 1 ? "" : "s") +
-              "). Merging now. Your submission is recorded once this pull request shows as merged; nothing else to do."
-            );
-
-            try {
-              await github.rest.pulls.merge({
-                owner, repo, pull_number: pr.number,
-                merge_method: "squash",
-                commit_title: `${pr.title} (#${pr.number})`,
-              });
-              core.setOutput("merged", "true");
-            } catch (e) {
-              await say(
-                "**Checks passed, but the merge failed:** " + e.message +
-                "\n\nUsually this means your branch conflicts with `main`. " +
-                "Update your branch from `main` and push again."
-              );
-              core.setFailed("Merge failed: " + e.message);
-            }
+            await guard.run({ github, context, core });
 
   roster:
     needs: check-and-merge
