@@ -1,10 +1,16 @@
-# Week 5 — 2026-10-08 · Stochasticity and noise
+# Week 5 extension mini-essays
 
-## Contents (naming in the repo README)
+Covers **lectures 9 and 10**. Due **2026-10-11, 23:59**.
 
-- **Extension micro-essays** (all non-teaching students): `week5_<name>_ext.html`
-  — every member of the audience submits one; due Wed 23:59 before the lecture.
-- **Session quizzes** (teaching students + answer key): `week5_<name>_quiz.md`
-  — written by the session presenter, **approved by the TA pair** before the lecture.
-- **Exposition** (teaching students): `week5_<name>_exposition.html` (or `.pdf`/`.pptx`)
-  — after the lecture, used for the week's `exposition` artifact on the course site.
+Add one file: `week5/week5-<yourname>-ext.html`, where `<yourname>` is your Latin name
+in lowercase with no spaces (for example `week5/week5-tongli-ext.html`). Start from
+[`TEMPLATE_ext.html`](../TEMPLATE_ext.html), and keep it a single self-contained HTML file.
+
+One example, one scenario, one opinion, one perspective or one argument. A few paragraphs,
+roughly 400 to 800 words. One thing you made yourself, with the code beside it. Every claim
+traceable. Not a recap of the lecture.
+
+The worked example is at
+<https://chemaoxfz.github.io/assets/ccbs/2026fall/extension-example/>.
+
+Everyone writes one every week, including the week you teach. Your best 6 of 8 count.

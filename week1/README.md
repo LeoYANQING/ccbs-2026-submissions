@@ -1,9 +1,9 @@
-# Week 3 extension mini-essays
+# Week 1 extension mini-essays
 
-Covers **lectures 5 and 6**. Due **2026-09-20, 23:59**.
+Covers **lectures 1 and 2**. Due **2026-09-06, 23:59**.
 
-Add one file: `week3/week3-<yourname>-ext.html`, where `<yourname>` is your Latin name
-in lowercase with no spaces (for example `week3/week3-tongli-ext.html`). Start from
+Add one file: `week1/week1-<yourname>-ext.html`, where `<yourname>` is your Latin name
+in lowercase with no spaces (for example `week1/week1-tongli-ext.html`). Start from
 [`TEMPLATE_ext.html`](../TEMPLATE_ext.html), and keep it a single self-contained HTML file.
 
 One example, one scenario, one opinion, one perspective or one argument. A few paragraphs,

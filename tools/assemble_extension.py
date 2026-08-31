@@ -11,7 +11,7 @@ a section with author attribution, plus assembly notes at the top. The skeleton 
 the essays into one coherent themed long-form writeup (keep authors; keep conflicts
 and opposing views visibly in conversation), reviews the result, and ships it as the
 week's extension-by-audience page to the main course site
-(assets/ccbs/2026fall/weekN/extension/index.html).
+(assets/ccbs/2026fall/lectureNN/extension/index.html).
 
 Stdlib only. Run with any Python 3.9+.
 """

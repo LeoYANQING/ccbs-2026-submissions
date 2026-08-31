@@ -1,0 +1,42 @@
+name: Rebuild the teaching roster
+
+# After anything lands on main, regenerate signup/ROSTER.md from the
+# signup/lectureNN-*.md files so everyone can see which lectures still have room.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'signup/lecture*.md'
+      - 'tools/build_roster.py'
+      - '.github/workflows/roster.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: roster
+  cancel-in-progress: false
+
+jobs:
+  roster:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Rebuild ROSTER.md
+        run: python3 tools/build_roster.py
+      - name: Commit if it changed
+        run: |
+          if git diff --quiet -- signup/ROSTER.md; then
+            echo "roster unchanged"
+            exit 0
+          fi
+          git config user.name  "ccbs-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add signup/ROSTER.md
+          git commit -m "Rebuild teaching roster"
+          git push
