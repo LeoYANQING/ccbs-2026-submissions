@@ -1,14 +1,19 @@
 name: Auto-merge student submissions
 
-# Checks that a pull request only touches submission paths, then merges it.
+# Checks that a pull request only touches submission paths, then merges it, then
+# rebuilds the teaching roster.
+#
 # Runs on pull_request_target so that pull requests from forks get a token with
-# write access. It NEVER checks out or executes the pull request's contents; it
-# only reads the file list through the API and merges. Do not add a checkout of
-# github.event.pull_request.head here.
+# write access. The validate-and-merge job NEVER checks out or executes the pull
+# request's contents; it only reads the file list through the API and merges.
+# Do not add a checkout of github.event.pull_request.head to it.
+#
+# The roster rebuild lives here rather than in roster.yml because a merge performed
+# with GITHUB_TOKEN does not trigger a new `push` workflow run.
 
 on:
   pull_request_target:
-    types: [opened, synchronize, reopened]
+    types: [opened, synchronize, reopened, ready_for_review]
 
 permissions:
   contents: write
@@ -21,13 +26,17 @@ concurrency:
 jobs:
   check-and-merge:
     runs-on: ubuntu-latest
+    outputs:
+      merged: ${{ steps.gate.outputs.merged }}
     steps:
       - name: Validate the changed files, then merge
+        id: gate
         uses: actions/github-script@v7
         with:
           script: |
             const pr = context.payload.pull_request;
             const owner = context.repo.owner, repo = context.repo.repo;
+            core.setOutput("merged", "false");
 
             const files = await github.paginate(
               github.rest.pulls.listFiles,
@@ -65,8 +74,6 @@ jobs:
                 problems.push(`\`${p}\` does not match any submission path. See the naming rules in the README.`);
               if (f.status === "removed")
                 problems.push(`\`${p}\` is being deleted. Submissions only add or update your own files.`);
-              if ((f.changes ?? 0) > 0 && (f.additions ?? 0) === 0 && f.status === "modified" && /^signup\//.test(p))
-                problems.push(`\`${p}\` is an empty edit.`);
               if ((f.size ?? 0) > MAX_BYTES)
                 problems.push(`\`${p}\` is larger than 5 MB. Keep submissions to a single self-contained file.`);
             }
@@ -87,8 +94,8 @@ jobs:
                 "or a filename does not match the expected pattern:\n\n" +
                 problems.map(p => `- ${p}`).join("\n") +
                 "\n\nFix it and push again to the same branch; this check re-runs automatically. " +
-                "Naming rules are in the [README](../blob/main/README.md). If you are stuck, " +
-                "ask a TA rather than fighting the bot."
+                "The naming rules are in the [README](https://github.com/" + owner + "/" + repo + "#readme). " +
+                "If you are stuck for more than ten minutes, ask a TA rather than fighting the bot."
               );
               core.setFailed("Submission paths did not validate.");
               return;
@@ -101,7 +108,7 @@ jobs:
 
             await say(
               "**Checks passed** (" + files.length + " file" + (files.length === 1 ? "" : "s") +
-              "). Merging now. Your submission is recorded once this is green; nothing else to do."
+              "). Merging now. Your submission is recorded once this pull request shows as merged; nothing else to do."
             );
 
             try {
@@ -110,11 +117,50 @@ jobs:
                 merge_method: "squash",
                 commit_title: `${pr.title} (#${pr.number})`,
               });
+              core.setOutput("merged", "true");
             } catch (e) {
               await say(
                 "**Checks passed, but the merge failed:** " + e.message +
-                "\n\nUsually this means the branch has a conflict with `main`. " +
+                "\n\nUsually this means your branch conflicts with `main`. " +
                 "Update your branch from `main` and push again."
               );
               core.setFailed("Merge failed: " + e.message);
             }
+
+  roster:
+    needs: check-and-merge
+    if: needs.check-and-merge.outputs.merged == 'true'
+    runs-on: ubuntu-latest
+    concurrency:
+      group: roster
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Rebuild ROSTER.md and push if it changed
+        run: |
+          set -euo pipefail
+          git config user.name  "ccbs-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          for attempt in 1 2 3; do
+            git fetch origin main
+            git reset --hard origin/main
+            python3 tools/build_roster.py
+            if git diff --quiet -- signup/ROSTER.md; then
+              echo "roster unchanged"
+              exit 0
+            fi
+            git add signup/ROSTER.md
+            git commit -m "Rebuild teaching roster"
+            if git push origin HEAD:main; then
+              echo "roster pushed on attempt $attempt"
+              exit 0
+            fi
+            echo "push raced, retrying"
+          done
+          echo "could not push the roster after 3 attempts" >&2
+          exit 1

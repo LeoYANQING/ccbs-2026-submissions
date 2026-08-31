@@ -3,13 +3,15 @@ name: Rebuild the teaching roster
 # After anything lands on main, regenerate signup/ROSTER.md from the
 # signup/lectureNN-*.md files so everyone can see which lectures still have room.
 
+# The normal path is automerge.yml, which rebuilds the roster right after it
+# merges (a merge made with GITHUB_TOKEN does not trigger a `push` workflow).
+# This one covers direct pushes by the lecturer and manual reruns.
 on:
   push:
     branches: [main]
     paths:
       - 'signup/lecture*.md'
       - 'tools/build_roster.py'
-      - '.github/workflows/roster.yml'
   workflow_dispatch:
 
 permissions:
