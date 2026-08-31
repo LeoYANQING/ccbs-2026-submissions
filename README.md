@@ -124,9 +124,11 @@ Thursday 2026-11-05, 23:59.
 
 ## For the TAs
 
-- **Roster.** `signup/ROSTER.md` rebuilds itself on every merge
-  (`.github/workflows/roster.yml` runs `tools/build_roster.py`). Run
-  `python3 tools/build_roster.py` locally to preview.
+- **Roster.** `signup/ROSTER.md` rebuilds itself on every merge: the second job of
+  `.github/workflows/automerge.yml` runs `tools/build_roster.py` and pushes the result.
+  (It lives there rather than in `roster.yml` because a merge made with `GITHUB_TOKEN`
+  does not trigger a `push` workflow.) `roster.yml` still covers direct pushes and manual
+  reruns. Run `python3 tools/build_roster.py` locally to preview.
 - **Weekly extension page.** Run `python3 tools/assemble_extension.py weekN`. It emits
   `weekN/extension_skeleton.html` with every mini-essay placed in order. Hand the skeleton
   to an agent with the instruction to weave the essays into one coherent themed writeup,
