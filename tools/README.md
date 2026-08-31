@@ -13,5 +13,6 @@ long-form writeup; keep authors; keep conflicts visibly in conversation" → rev
 publish to the main course site under `assets/ccbs/2026fall/lectureNN/extension/` and link
 from `_pages/ccbs-2026.md` in `chemaoxfz/chemaoxfz.github.io`.
 
-Quizzes are NOT assembled by the script — they are checked against the approval
-checklist in `TEMPLATE_quiz.md` and used in class as-is.
+`tools/build_roster.py` is the other script here: it regenerates `signup/ROSTER.md`
+from the `signup/lectureNN-*.md` sign-up files. It runs automatically as the second job
+of `.github/workflows/automerge.yml`, so you rarely need to invoke it by hand.
